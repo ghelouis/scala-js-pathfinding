@@ -1,14 +1,16 @@
 import org.scalajs.dom
-import org.scalajs.dom.{CanvasRenderingContext2D, KeyCode, html}
+import org.scalajs.dom.{CanvasRenderingContext2D, KeyCode, console, html}
 
 import scala.util.Random
 
-object App:
-  private val width = 1000
-  private val height = 800
-  private val tileSize = 20
+val width = 1000
+val height = 800
+val tileSize = 20
 
-  case class Pos(x: Int, y: Int)
+enum Tile:
+  case Empty, Start, Finish, Obstacle
+
+object App:
 
   private def drawGrid(ctx: CanvasRenderingContext2D): Unit =
     for i <- 1 until width / tileSize do
@@ -23,6 +25,34 @@ object App:
     ctx.fillStyle = style
     ctx.fillRect(tileX * tileSize + 1, tileY * tileSize + 1, tileSize - 2, tileSize - 2)
 
+  private def drawMap(ctx: CanvasRenderingContext2D, map: Seq[Seq[Tile]]): Unit =
+    map.zipWithIndex.map { case (column, x) =>
+      column.zipWithIndex.map { case (tile, y) =>
+        tile match
+          case Tile.Empty =>
+            fillTile(ctx, "aliceblue", x, y)
+          case Tile.Start =>
+            fillTile(ctx, "green", x, y)
+          case Tile.Finish =>
+            fillTile(ctx, "red", x, y)
+          case Tile.Obstacle =>
+      }
+    }
+
+  private def buildMap(): Seq[Seq[Tile]] =
+    val startY = Random.nextInt(height / tileSize)
+    val finishY = Random.nextInt(height / tileSize)
+
+    (0 until width / tileSize)
+      .map(x =>
+        (0 until height / tileSize)
+          .map(y =>
+            if x == 0 && y == startY then Tile.Start
+            else if x == width / tileSize - 1 && y == finishY then Tile.Finish
+            else Tile.Empty
+          )
+      )
+
   private def initNewRandomMap(): Unit =
     val canvas = dom.document.querySelector("canvas").asInstanceOf[html.Canvas]
     val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
@@ -33,10 +63,8 @@ object App:
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     drawGrid(ctx)
 
-    val start = Pos(0, Random.nextInt(height / tileSize))
-    val goal = Pos(width / tileSize - 1, Random.nextInt(height / tileSize))
-    fillTile(ctx, "green", start.x, start.y)
-    fillTile(ctx, "red", goal.x, goal.y)
+    val map = buildMap()
+    drawMap(ctx, map)
 
   private def handleKeyPressed(keyCode: Int): Unit =
     keyCode match
