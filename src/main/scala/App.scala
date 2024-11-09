@@ -1,5 +1,5 @@
 import org.scalajs.dom
-import org.scalajs.dom.{CanvasRenderingContext2D, KeyCode, html}
+import org.scalajs.dom.{CanvasRenderingContext2D, KeyCode, console, html}
 
 import scala.util.Random
 
@@ -9,6 +9,7 @@ val tileSize = 20
 val nObstacles = 15
 val obstacleMinSize = 5
 val obstacleMaxSize = 11
+val fps = 1
 
 enum Tile:
   case Empty, Start, Finish, Obstacle
@@ -23,6 +24,8 @@ object Tile:
       "red"
     case Tile.Obstacle =>
       "darkslateblue"
+
+case class Pos(x: Int, y: Int)
 
 object App:
 
@@ -49,10 +52,7 @@ object App:
       }
     }
 
-  private def buildMap(): Seq[Seq[Tile]] =
-    val startY = Random.nextInt(height / tileSize)
-    val finishY = Random.nextInt(height / tileSize)
-
+  private def buildMap(start: Pos, finish: Pos): Seq[Seq[Tile]] =
     val obstacles = (0 until nObstacles)
       .flatMap(_ =>
         val x = getRandomBetween(1, width / tileSize - obstacleMaxSize - 1)
@@ -66,14 +66,14 @@ object App:
       .map(x =>
         (0 until height / tileSize)
           .map(y =>
-            if x == 0 && y == startY then Tile.Start
-            else if x == width / tileSize - 1 && y == finishY then Tile.Finish
+            if x == start.x && y == start.y then Tile.Start
+            else if x == finish.x && y == finish.y then Tile.Finish
             else if obstacles.contains(x, y) then Tile.Obstacle
             else Tile.Empty
           )
       )
 
-  private def initNewRandomMap(): Unit =
+  private def initNewRandomMap(): Seq[Seq[Tile]] =
     val canvas = dom.document.querySelector("canvas").asInstanceOf[html.Canvas]
     val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
     canvas.width = width
@@ -83,8 +83,13 @@ object App:
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     drawGrid(ctx)
 
-    val map = buildMap()
+    val start = Pos(0, Random.nextInt(height / tileSize))
+    val finish = Pos(width / tileSize - 1, Random.nextInt(height / tileSize))
+    val map = buildMap(start, finish)
     drawMap(ctx, map)
+
+    Dijkstra.init(map, start, finish)
+    map
 
   private def handleKeyPressed(keyCode: Int): Unit =
     keyCode match
@@ -93,6 +98,11 @@ object App:
       case _ =>
       // key not mapped to an action
 
+  private def update(map: Seq[Seq[Tile]]): Unit =
+    console.log("updating...")
+    Dijkstra.iterate()
+
   def main(args: Array[String]): Unit =
-    initNewRandomMap()
+    val map = initNewRandomMap()
     dom.window.onkeydown = mouseEvent => handleKeyPressed(mouseEvent.keyCode)
+    RenderLoop.start(update, map)

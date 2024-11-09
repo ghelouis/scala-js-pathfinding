@@ -9,5 +9,6 @@ Run locally:
 ## Resources
 - https://www.scala-js.org/doc/tutorial/basic/
 - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas
+- https://en.wikipedia.org/wiki/Pathfinding
 - https://en.wikipedia.org/wiki/A*_search_algorithm
 - https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
