@@ -1,16 +1,22 @@
 import org.scalajs.dom
-import org.scalajs.dom.{CanvasRenderingContext2D, KeyCode, console, html}
+import org.scalajs.dom.{CanvasRenderingContext2D, KeyCode, html}
 
 import scala.util.Random
 
 val width = 1000
 val height = 800
 val tileSize = 20
+val nObstacles = 15
+val obstacleMinSize = 5
+val obstacleMaxSize = 11
 
 enum Tile:
   case Empty, Start, Finish, Obstacle
 
 object App:
+
+  private def getRandomBetween(start: Int, end: Int) =
+    start + Random.nextInt(end - start + 1)
 
   private def drawGrid(ctx: CanvasRenderingContext2D): Unit =
     for i <- 1 until width / tileSize do
@@ -36,6 +42,7 @@ object App:
           case Tile.Finish =>
             fillTile(ctx, "red", x, y)
           case Tile.Obstacle =>
+            fillTile(ctx, "darkslateblue", x, y)
       }
     }
 
@@ -43,12 +50,22 @@ object App:
     val startY = Random.nextInt(height / tileSize)
     val finishY = Random.nextInt(height / tileSize)
 
+    val obstacles = (0 until nObstacles)
+      .flatMap(_ =>
+        val x = getRandomBetween(1, width / tileSize - obstacleMaxSize - 1)
+        val y = getRandomBetween(0, height / tileSize - obstacleMaxSize)
+        val size = getRandomBetween(obstacleMinSize, obstacleMaxSize)
+        (x until x + size).flatMap(x => (y until y + size).map(y => (x, y)))
+      )
+      .toSet
+
     (0 until width / tileSize)
       .map(x =>
         (0 until height / tileSize)
           .map(y =>
             if x == 0 && y == startY then Tile.Start
             else if x == width / tileSize - 1 && y == finishY then Tile.Finish
+            else if obstacles.contains(x, y) then Tile.Obstacle
             else Tile.Empty
           )
       )
