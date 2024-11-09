@@ -13,6 +13,17 @@ val obstacleMaxSize = 11
 enum Tile:
   case Empty, Start, Finish, Obstacle
 
+object Tile:
+  def getStyle(tile: Tile): String = tile match
+    case Tile.Empty =>
+      "aliceblue"
+    case Tile.Start =>
+      "green"
+    case Tile.Finish =>
+      "red"
+    case Tile.Obstacle =>
+      "darkslateblue"
+
 object App:
 
   private def getRandomBetween(start: Int, end: Int) =
@@ -34,15 +45,7 @@ object App:
   private def drawMap(ctx: CanvasRenderingContext2D, map: Seq[Seq[Tile]]): Unit =
     map.zipWithIndex.map { case (column, x) =>
       column.zipWithIndex.map { case (tile, y) =>
-        tile match
-          case Tile.Empty =>
-            fillTile(ctx, "aliceblue", x, y)
-          case Tile.Start =>
-            fillTile(ctx, "green", x, y)
-          case Tile.Finish =>
-            fillTile(ctx, "red", x, y)
-          case Tile.Obstacle =>
-            fillTile(ctx, "darkslateblue", x, y)
+        fillTile(ctx, Tile.getStyle(tile), x, y)
       }
     }
 
