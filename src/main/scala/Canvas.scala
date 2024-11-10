@@ -3,8 +3,9 @@ import org.scalajs.dom.{CanvasRenderingContext2D, Node, html}
 import org.scalajs.dom.html.Canvas
 
 object Canvas:
-  lazy val canvas: Canvas = dom.document.querySelector("canvas").asInstanceOf[html.Canvas]
-  lazy val ctx: CanvasRenderingContext2D = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  private lazy val canvas: Canvas = dom.document.querySelector("canvas").asInstanceOf[html.Canvas]
+  private lazy val ctx: CanvasRenderingContext2D =
+    canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
   private lazy val pathNotFoundNode = dom.document.createTextNode("No path found!")
   private lazy val pathFoundNode = dom.document.createTextNode("Path found!")
@@ -51,9 +52,6 @@ object Canvas:
     dom.document.body.appendChild(pathNotFoundNode)
 
   def drawPathFoundMessage(): Node =
-    dom.document.body.appendChild(pathFoundNode)
-
-  def drawNumIterationMessage(): Node =
     dom.document.body.appendChild(pathFoundNode)
 
   def clearMessages(): Unit =
