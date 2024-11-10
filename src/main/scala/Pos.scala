@@ -7,7 +7,4 @@ object Pos:
       Pos(pos.x + 1, pos.y),
       Pos(pos.x, pos.y - 1),
       Pos(pos.x - 1, pos.y)
-    )
-
-  def isOnMap(pos: Pos): Boolean =
-    pos.x >= 0 && pos.x < width / tileSize && pos.y >= 0 && pos.y < height / tileSize
+    ).filter(pos => pos.x >= 0 && pos.x < width / tileSize && pos.y >= 0 && pos.y < height / tileSize)

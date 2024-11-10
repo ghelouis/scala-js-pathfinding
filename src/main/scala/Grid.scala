@@ -1,8 +1,11 @@
 import scala.util.Random
 
 object Grid:
+
   var tiles: Seq[Seq[Tile]] = Seq.empty
+
   var start: Pos = Pos(0, 0)
+
   var finish: Pos = Pos(0, 0)
 
   private def getRandomBetween(a: Int, b: Int) =
@@ -31,5 +34,3 @@ object Grid:
             else Tile.Empty
           )
       )
-
-  def isObstacle(pos: Pos): Boolean = tiles(pos.x)(pos.y) == Tile.Obstacle

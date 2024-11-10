@@ -10,7 +10,9 @@ val obstacleMaxSize = 11
 val fps = 60
 
 object App:
+  
   private lazy val pathNotFoundNode = dom.document.createTextNode("No path found!")
+  
   private lazy val pathFoundNode = dom.document.createTextNode("Path found!")
 
   private def initNewRandomMap(): Unit =
