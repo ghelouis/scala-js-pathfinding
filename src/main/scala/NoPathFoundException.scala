@@ -1,0 +1,1 @@
+class NoPathFoundException extends RuntimeException

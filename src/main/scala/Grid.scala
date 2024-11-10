@@ -35,3 +35,6 @@ object Grid:
             else Tile.Empty
           )
       )
+
+  def isObstacle(pos: Pos): Boolean =
+    tiles(pos.x)(pos.y) == Tile.Obstacle

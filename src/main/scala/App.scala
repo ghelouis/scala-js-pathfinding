@@ -9,7 +9,7 @@ object App:
 
   private lazy val pathFoundNode = dom.document.createTextNode("Path found!")
 
-  private val algos = SortedMap("Dijkstra" -> "todo", "A*" -> "todo")
+  private val algos = SortedMap("Dijkstra" -> Dijkstra, "A*" -> AStar)
 
   private var algo = "Dijkstra"
 
@@ -22,15 +22,23 @@ object App:
       case None =>
         algo = algos.keySet.head
 
+  private def currentAlgo() = algos(algo)
+
   private def initNewRandomMap(): Unit =
     Grid.generate()
     Canvas.drawGrid()
-    Dijkstra.init()
+    currentAlgo().init()
     RenderLoop.start(update)
 
   private def clearMessages() =
     if dom.document.body.contains(pathNotFoundNode) then dom.document.body.removeChild(pathNotFoundNode)
     if dom.document.body.contains(pathFoundNode) then dom.document.body.removeChild(pathFoundNode)
+
+  private def restart(): Unit =
+    clearMessages()
+    Canvas.drawGrid()
+    currentAlgo().init()
+    RenderLoop.start(update)
 
   private def handleKeyPressed(keyCode: Int): Unit =
     keyCode match
@@ -38,22 +46,20 @@ object App:
         clearMessages()
         initNewRandomMap()
       case KeyCode.R =>
-        clearMessages()
-        Canvas.drawGrid()
-        Dijkstra.init()
-        RenderLoop.start(update)
+        restart()
       case KeyCode.A =>
         rotateAlgo()
+        restart()
         dom.document.getElementById("algo").textContent = algo
       case _ =>
       // key not mapped to an action
 
   private def update(): Unit =
     try
-      val (visitedPosition, isFinished) = Dijkstra.iterate()
+      val (visitedPosition, isFinished) = currentAlgo().iterate()
       if isFinished then
         RenderLoop.stop()
-        Dijkstra.getShortestPath.foreach(Canvas.drawShortestPathPosition)
+        currentAlgo().getShortestPath.foreach(Canvas.drawShortestPathPosition)
         dom.document.body.appendChild(pathFoundNode)
       else visitedPosition.foreach(Canvas.drawVisitedPosition)
     catch

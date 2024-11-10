@@ -1,48 +1,49 @@
 import scala.collection.mutable.{Map as MutableMap, Queue as MutableQueue, Set as MutableSet}
 
-object Dijkstra extends Algo:
-
-  private val dist: MutableMap[Pos, Int] = MutableMap.empty
+object AStar extends Algo:
 
   private val prev: MutableMap[Pos, Pos] = MutableMap.empty
 
   private val tileSet: MutableSet[Pos] = MutableSet.empty
 
+  private val gScore: MutableMap[Pos, Int] = MutableMap.empty
+
+  private val fScore: MutableMap[Pos, Int] = MutableMap.empty
+
   def init(): Unit =
-    dist.clear()
     prev.clear()
     tileSet.clear()
+    gScore.clear()
+    fScore.clear()
 
-    dist(Grid.start) = 0
-
-    Grid.tiles.zipWithIndex.map { case (column, x) =>
-      column.zipWithIndex.map { case (tile, y) =>
-        if tile != Tile.Obstacle then tileSet.add(Pos(x, y))
-      }
-    }
+    tileSet.add(Grid.start)
+    gScore(Grid.start) = 0
+    fScore(Grid.start) = Pos.getDist(Grid.start, Grid.finish)
 
   @throws[NoPathFoundException]("if no path is found")
   def iterate(): (Option[Pos], Boolean) =
     if tileSet.isEmpty then throw new NoPathFoundException
 
     val tile = tileSet
-      .map(pos => (pos, dist.getOrElse(pos, Int.MaxValue)))
+      .map(pos => (pos, fScore.getOrElse(pos, Int.MaxValue)))
       .minBy(_._2)
       ._1
 
     tileSet.remove(tile)
 
-    if !dist.contains(tile) then throw new NoPathFoundException
-
     Pos
       .getNeighbors(tile)
-      .filter(tileSet.contains)
+      .filterNot(Grid.isObstacle)
       .foreach(neighbor =>
-        val distToNeighborViaTile = dist(tile) + 1
-        if distToNeighborViaTile < dist.getOrElse(neighbor, Int.MaxValue) then
-          dist(neighbor) = distToNeighborViaTile
+        val tentativeGScore = gScore(tile) + 1
+        if tentativeGScore < gScore.getOrElse(neighbor, Int.MaxValue) then
           prev(neighbor) = tile
+          gScore(neighbor) = tentativeGScore
+          fScore(neighbor) = tentativeGScore + Pos.getDist(tile, Grid.finish)
+          if !tileSet.contains(neighbor) then tileSet.add(neighbor)
       )
+
+    if tileSet.isEmpty then throw new NoPathFoundException
 
     if Grid.start == tile then (None, false)
     else (Some(tile), Grid.finish == tile)
