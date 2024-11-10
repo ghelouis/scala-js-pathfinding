@@ -1,6 +1,6 @@
 # Scala.js Pathfinding
 
-Popular pathfinding algorithms implemented in Scala.js
+Pathfinding algorithms implemented in Scala.js
 
 Run locally:
 1. Generate JavaScript with: `sbt fastOptJS`
