@@ -12,40 +12,31 @@ object Dijkstra:
 
   private val q: MutableSet[Pos] = MutableSet.empty
 
-  private var start: Pos = Pos(0, 0)
+  def init(): Unit =
+    dist.clear()
+    prev.clear()
+    q.clear()
 
-  private var finish: Pos = Pos(width - 1, 0)
+    dist(Grid.start) = 0
 
-  private val obstacles: MutableSet[Pos] = MutableSet.empty
-
-  def init(map: Seq[Seq[Tile]]): Unit =
-    obstacles.clear()
-
-    map.zipWithIndex.map { case (column, x) =>
+    Grid.tiles.zipWithIndex.map { case (column, x) =>
       column.zipWithIndex.map { case (tile, y) =>
-        val pos = Pos(x, y)
-        dist(pos) = Int.MaxValue
-        q.add(pos)
-        if tile == Tile.Start then start = Pos(x, y)
-        if tile == Tile.Finish then finish = Pos(x, y)
-        if tile == Tile.Obstacle then obstacles.add(Pos(x, y))
+        q.add(Pos(x, y))
       }
     }
-
-    dist(start) = 0
 
   @throws[NoPathFoundException]("if no path is found")
   def iterate(): (Option[Pos], Boolean) =
     if q.isEmpty then throw new NoPathFoundException
 
     val u = q
-      .map(pos => (pos, dist.get(pos)))
+      .map(pos => (pos, dist.getOrElse(pos, Int.MaxValue)))
       .minBy(_._2)
       ._1
 
     q.remove(u)
 
-    if dist(u) == Int.MaxValue then throw new NoPathFoundException
+    if !dist.contains(u) then throw new NoPathFoundException
 
     Pos
       .getNeighbors(u)
@@ -53,21 +44,21 @@ object Dijkstra:
       .filter(isAccessible)
       .foreach(v =>
         val alt = dist(u) + 1
-        if alt < dist(v) then
+        if alt < dist.getOrElse(v, Int.MaxValue) then
           dist(v) = alt
           prev(v) = u
       )
 
-    if start == u then (None, false)
-    else (Some(u), u == finish)
+    if Grid.start == u then (None, false)
+    else (Some(u), Grid.finish == u)
 
   private def isAccessible(pos: Pos) =
-    Pos.isOnMap(pos) && !obstacles.contains(pos)
+    Pos.isOnMap(pos) && !Grid.isObstacle(pos)
 
   def getShortestPath: MutableQueue[Pos] =
     val path: MutableQueue[Pos] = MutableQueue.empty
-    var u = prev.get(finish)
-    while u.isDefined && !u.contains(start) do
+    var u = prev.get(Grid.finish)
+    while u.isDefined && !u.contains(Grid.start) do
       path.append(u.get)
       u = prev.get(u.get)
     path

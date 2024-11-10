@@ -21,7 +21,7 @@ object Canvas:
     ctx.strokeStyle = strokeStyle
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  def drawGrid(): Unit =
+  def drawGridBackground(): Unit =
     for i <- 1 until width / tileSize do
       ctx.moveTo(i * tileSize, 0)
       ctx.lineTo(i * tileSize, height)
@@ -30,8 +30,8 @@ object Canvas:
         ctx.lineTo(width, i * tileSize)
     ctx.stroke()
 
-  def drawMap(map: Seq[Seq[Tile]]): Unit =
-    map.zipWithIndex.map { case (column, x) =>
+  def drawGrid(): Unit =
+    Grid.tiles.zipWithIndex.map { case (column, x) =>
       column.zipWithIndex.map { case (tile, y) =>
         fillTile(ctx, Tile.getStyle(tile), x, y)
       }
