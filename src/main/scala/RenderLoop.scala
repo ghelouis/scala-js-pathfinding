@@ -3,7 +3,7 @@ import org.scalajs.dom
 import scala.scalajs.js.Date
 
 object RenderLoop:
-  private val fpsInterval = 1000 / fps
+  private val fpsInterval = 1000 / Config.fps
   private var before = 0.0
   private var stopped = false
 

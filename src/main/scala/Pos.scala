@@ -1,3 +1,5 @@
+import Config.{width, height, tileSize}
+
 case class Pos(x: Int, y: Int)
 
 object Pos:

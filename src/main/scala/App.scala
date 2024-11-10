@@ -1,19 +1,26 @@
 import org.scalajs.dom
 import org.scalajs.dom.KeyCode
 
-val width = 1000
-val height = 800
-val tileSize = 20
-val nObstacles = 15
-val obstacleMinSize = 5
-val obstacleMaxSize = 11
-val fps = 60
+import scala.collection.immutable.SortedMap
 
 object App:
 
   private lazy val pathNotFoundNode = dom.document.createTextNode("No path found!")
 
   private lazy val pathFoundNode = dom.document.createTextNode("Path found!")
+
+  private val algos = SortedMap("Dijkstra" -> "todo", "A*" -> "todo")
+
+  private var algo = "Dijkstra"
+
+  private def rotateAlgo(): Unit =
+    val it = algos.keysIteratorFrom(algo)
+    it.next()
+    it.nextOption() match
+      case Some(nextAlgo) =>
+        algo = nextAlgo
+      case None =>
+        algo = algos.keySet.head
 
   private def initNewRandomMap(): Unit =
     Grid.generate()
@@ -35,6 +42,9 @@ object App:
         Canvas.drawGrid()
         Dijkstra.init()
         RenderLoop.start(update)
+      case KeyCode.A =>
+        rotateAlgo()
+        dom.document.getElementById("algo").textContent = algo
       case _ =>
       // key not mapped to an action
 

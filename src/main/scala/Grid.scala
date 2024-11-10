@@ -1,4 +1,5 @@
 import scala.util.Random
+import Config.{width, height, tileSize, nObstacles, obstacleMinSize, obstacleMaxSize}
 
 object Grid:
 

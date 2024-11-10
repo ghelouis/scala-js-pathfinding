@@ -1,6 +1,7 @@
 import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, html}
 import org.scalajs.dom.html.Canvas
+import Config.{width, height, tileSize}
 
 object Canvas:
   private lazy val canvas: Canvas = dom.document.querySelector("canvas").asInstanceOf[html.Canvas]
