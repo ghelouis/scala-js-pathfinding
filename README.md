@@ -2,6 +2,8 @@
 
 Pathfinding algorithms implemented in Scala.js
 
+View live here: https://ghelouis.fr/pathfinding/
+
 Run locally:
 1. Generate JavaScript with: `sbt fastOptJS`
 2. Open `index.html` in your favorite browser
