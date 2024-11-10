@@ -10,6 +10,8 @@ val obstacleMaxSize = 11
 val fps = 60
 
 object App:
+  private lazy val pathNotFoundNode = dom.document.createTextNode("No path found!")
+  private lazy val pathFoundNode = dom.document.createTextNode("Path found!")
 
   private def initNewRandomMap(): Unit =
     Grid.generate()
@@ -20,7 +22,8 @@ object App:
   private def handleKeyPressed(keyCode: Int): Unit =
     keyCode match
       case KeyCode.N =>
-        Canvas.clearMessages()
+        if dom.document.body.contains(pathNotFoundNode) then dom.document.body.removeChild(pathNotFoundNode)
+        if dom.document.body.contains(pathFoundNode) then dom.document.body.removeChild(pathFoundNode)
         initNewRandomMap()
       case _ =>
       // key not mapped to an action
@@ -31,12 +34,12 @@ object App:
       if isFinished then
         RenderLoop.stop()
         Dijkstra.getShortestPath.foreach(Canvas.drawShortestPathPosition)
-        Canvas.drawPathFoundMessage()
+        dom.document.body.appendChild(pathFoundNode)
       else visitedPosition.foreach(Canvas.drawVisitedPosition)
     catch
       case e: NoPathFoundException =>
         RenderLoop.stop()
-        Canvas.drawPathNotFoundMessage()
+        dom.document.body.appendChild(pathNotFoundNode)
 
   def main(args: Array[String]): Unit =
     Canvas.init()
