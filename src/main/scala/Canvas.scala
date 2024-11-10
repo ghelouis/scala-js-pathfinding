@@ -1,14 +1,18 @@
 import org.scalajs.dom
-import org.scalajs.dom.{CanvasRenderingContext2D, html}
+import org.scalajs.dom.{CanvasRenderingContext2D, Node, html}
 import org.scalajs.dom.html.Canvas
 
 object Canvas:
   lazy val canvas: Canvas = dom.document.querySelector("canvas").asInstanceOf[html.Canvas]
   lazy val ctx: CanvasRenderingContext2D = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
+  private lazy val pathNotFoundNode = dom.document.createTextNode("No path found!")
+  private lazy val pathFoundNode = dom.document.createTextNode("Path found!")
+
   private val fillStyle = "white"
   private val strokeStyle = "black"
   private val visitedPositionStyle = "tomato"
+  private val shortedPathPositionStyle = "yellow"
 
   def init(): Unit =
     canvas.width = width
@@ -39,3 +43,19 @@ object Canvas:
 
   def drawVisitedPosition(pos: Pos): Unit =
     fillTile(ctx, visitedPositionStyle, pos.x, pos.y)
+
+  def drawShortestPathPosition(pos: Pos): Unit =
+    fillTile(ctx, shortedPathPositionStyle, pos.x, pos.y)
+
+  def drawPathNotFoundMessage(): Node =
+    dom.document.body.appendChild(pathNotFoundNode)
+
+  def drawPathFoundMessage(): Node =
+    dom.document.body.appendChild(pathFoundNode)
+
+  def drawNumIterationMessage(): Node =
+    dom.document.body.appendChild(pathFoundNode)
+
+  def clearMessages(): Unit =
+    if dom.document.body.contains(pathNotFoundNode) then dom.document.body.removeChild(pathNotFoundNode)
+    if dom.document.body.contains(pathFoundNode) then dom.document.body.removeChild(pathFoundNode)

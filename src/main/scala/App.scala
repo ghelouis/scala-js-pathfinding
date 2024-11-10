@@ -43,20 +43,31 @@ object App:
     val map = buildMap()
     Dijkstra.init(map)
     Canvas.drawMap(map)
+    RenderLoop.start(update)
 
   private def handleKeyPressed(keyCode: Int): Unit =
     keyCode match
       case KeyCode.N =>
+        Canvas.clearMessages()
         initNewRandomMap()
       case _ =>
       // key not mapped to an action
 
-  private def update(): Unit =
-    Dijkstra.iterate().foreach(Canvas.drawVisitedPosition)
+  private def update(requestAnimationId: Int): Unit =
+    try
+      val (visitedPosition, isFinished) = Dijkstra.iterate()
+      if isFinished then
+        dom.window.cancelAnimationFrame(requestAnimationId)
+        Dijkstra.getShortestPath.foreach(Canvas.drawShortestPathPosition)
+        Canvas.drawPathFoundMessage()
+      else visitedPosition.foreach(Canvas.drawVisitedPosition)
+    catch
+      case e: NoPathFoundException =>
+        dom.window.cancelAnimationFrame(requestAnimationId)
+        Canvas.drawPathNotFoundMessage()
 
   def main(args: Array[String]): Unit =
     Canvas.init()
     Canvas.drawGrid()
     initNewRandomMap()
     dom.window.onkeydown = mouseEvent => handleKeyPressed(mouseEvent.keyCode)
-    RenderLoop.start(update)
