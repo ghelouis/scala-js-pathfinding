@@ -44,3 +44,6 @@ object Canvas:
 
   def drawShortestPathPosition(pos: Pos): Unit =
     fillTile(ctx, shortedPathPositionStyle, pos.x, pos.y)
+
+  def clearTile(pos: Pos): Unit =
+    fillTile(ctx, Tile.getStyle(Tile.Empty), pos.x, pos.y)
