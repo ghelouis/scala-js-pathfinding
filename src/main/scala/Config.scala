@@ -1,7 +1,7 @@
 object Config:
-  val width = 1000
+  val width = 900
 
-  val height = 800
+  val height = 700
 
   val tileSize = 20
 
@@ -9,6 +9,6 @@ object Config:
 
   val obstacleMinSize = 5
 
-  val obstacleMaxSize = 11
+  val obstacleMaxSize = 10
 
   val fps = 60
