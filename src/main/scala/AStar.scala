@@ -39,7 +39,7 @@ object AStar extends Algo:
         if tentativeGScore < gScore.getOrElse(neighbor, Int.MaxValue) then
           prev(neighbor) = tile
           gScore(neighbor) = tentativeGScore
-          fScore(neighbor) = tentativeGScore + Pos.getDist(tile, Grid.finish)
+          fScore(neighbor) = tentativeGScore + Pos.getDist(neighbor, Grid.finish)
           if !tileSet.contains(neighbor) then tileSet.add(neighbor)
       )
 
