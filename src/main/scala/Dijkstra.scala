@@ -8,6 +8,8 @@ object Dijkstra extends Algo:
 
   private val tileSet: MutableSet[Pos] = MutableSet.empty
 
+  def getName = "Dijkstra"
+
   def init(): Unit =
     dist.clear()
     prev.clear()

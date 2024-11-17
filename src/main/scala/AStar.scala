@@ -10,6 +10,8 @@ object AStar extends Algo:
 
   private val fScore: MutableMap[Pos, Int] = MutableMap.empty
 
+  def getName = "A*"
+
   def init(): Unit =
     prev.clear()
     tileSet.clear()

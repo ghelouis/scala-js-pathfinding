@@ -1,33 +1,24 @@
 import org.scalajs.dom
 import org.scalajs.dom.KeyCode
 
-import scala.collection.immutable.SortedMap
-
 object App:
 
   private lazy val pathNotFoundNode = dom.document.createTextNode("No path found!")
 
   private lazy val pathFoundNode = dom.document.createTextNode("Path found!")
 
-  private val algos = SortedMap("Dijkstra" -> Dijkstra, "A*" -> AStar, "Greedy" -> Greedy)
+  private val algos = List(Dijkstra, AStar, Greedy)
 
-  private var algo = "Dijkstra"
+  private var currentAlgo: Algo = Dijkstra
 
   private def rotateAlgo(): Unit =
-    val it = algos.keysIteratorFrom(algo)
-    it.next()
-    it.nextOption() match
-      case Some(nextAlgo) =>
-        algo = nextAlgo
-      case None =>
-        algo = algos.keySet.head
-
-  private def currentAlgo() = algos(algo)
+    if algos.indexOf(currentAlgo) + 1 < algos.size then currentAlgo = algos(algos.indexOf(currentAlgo) + 1)
+    else currentAlgo = algos.head
 
   private def initNewRandomMap(): Unit =
     Grid.generate()
     Canvas.drawGrid()
-    currentAlgo().init()
+    currentAlgo.init()
     RenderLoop.start(update)
 
   private def clearMessages() =
@@ -37,7 +28,7 @@ object App:
   private def restart(): Unit =
     clearMessages()
     Canvas.drawGrid()
-    currentAlgo().init()
+    currentAlgo.init()
     RenderLoop.start(update)
 
   private def handleKeyPressed(keyCode: Int): Unit =
@@ -50,16 +41,16 @@ object App:
       case KeyCode.A =>
         rotateAlgo()
         restart()
-        dom.document.getElementById("algo").textContent = algo
+        dom.document.getElementById("algo").textContent = currentAlgo.getName
       case _ =>
       // key not mapped to an action
 
   private def update(): Unit =
     try
-      val (visitedPosition, isFinished) = currentAlgo().iterate()
+      val (visitedPosition, isFinished) = currentAlgo.iterate()
       if isFinished then
         RenderLoop.stop()
-        currentAlgo().getShortestPath.foreach(Canvas.drawShortestPathPosition)
+        currentAlgo.getShortestPath.foreach(Canvas.drawShortestPathPosition)
         dom.document.body.appendChild(pathFoundNode)
       else visitedPosition.foreach(Canvas.drawVisitedPosition)
     catch

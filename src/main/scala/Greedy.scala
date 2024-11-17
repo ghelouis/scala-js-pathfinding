@@ -10,6 +10,8 @@ object Greedy extends Algo:
 
   private val visitedSet: MutableSet[Pos] = MutableSet.empty
 
+  def getName = "Greedy"
+
   override def init(): Unit =
     dist.clear()
     prev.clear()
