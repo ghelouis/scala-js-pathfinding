@@ -51,10 +51,6 @@ object App:
         rotateAlgo()
         restart()
         dom.document.getElementById("algo").textContent = algo
-      case KeyCode.Space =>
-        RenderLoop.toggle(update)
-      case KeyCode.Right =>
-        update()
       case _ =>
       // key not mapped to an action
 
