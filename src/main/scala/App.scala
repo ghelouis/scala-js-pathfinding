@@ -9,7 +9,7 @@ object App:
 
   private lazy val pathFoundNode = dom.document.createTextNode("Path found!")
 
-  private val algos = SortedMap("Dijkstra" -> Dijkstra, "A*" -> AStar)
+  private val algos = SortedMap("Dijkstra" -> Dijkstra, "A*" -> AStar, "Greedy" -> Greedy)
 
   private var algo = "Dijkstra"
 
