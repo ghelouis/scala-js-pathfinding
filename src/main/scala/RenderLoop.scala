@@ -23,3 +23,7 @@ object RenderLoop:
     animate(before, update)
 
   def stop(): Unit = stopped = true
+
+  def toggle(update: () => Unit): Unit =
+    if stopped then start(update)
+    else stop()
