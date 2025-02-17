@@ -11,10 +11,6 @@ object App:
 
   private var currentAlgo: Algo = Dijkstra
 
-  private def rotateAlgo(): Unit =
-    if algos.indexOf(currentAlgo) + 1 < algos.size then currentAlgo = algos(algos.indexOf(currentAlgo) + 1)
-    else currentAlgo = algos.head
-
   private def initNewRandomMap(): Unit =
     Grid.generate()
     Canvas.drawGrid()
@@ -31,20 +27,6 @@ object App:
     currentAlgo.init()
     RenderLoop.start(update)
 
-  private def handleKeyPressed(keyCode: Int): Unit =
-    keyCode match
-      case KeyCode.N =>
-        clearMessages()
-        initNewRandomMap()
-      case KeyCode.R =>
-        restart()
-      case KeyCode.A =>
-        rotateAlgo()
-        restart()
-        dom.document.getElementById("algo").textContent = currentAlgo.getName
-      case _ =>
-      // key not mapped to an action
-
   private def update(): Unit =
     try
       val (visitedPosition, isFinished) = currentAlgo.iterate()
@@ -58,8 +40,35 @@ object App:
         RenderLoop.stop()
         dom.document.body.appendChild(pathNotFoundNode)
 
+  private def regenMap(): Unit =
+    clearMessages()
+    initNewRandomMap()
+
+  private def rotateAlgo(): Unit =
+    if algos.indexOf(currentAlgo) + 1 < algos.size then currentAlgo = algos(algos.indexOf(currentAlgo) + 1)
+    else currentAlgo = algos.head
+    restart()
+    dom.document.getElementById("algo").textContent = currentAlgo.getName
+
+  private def handleKeyPressed(keyCode: Int): Unit =
+    keyCode match
+      case KeyCode.N =>
+        regenMap()
+      case KeyCode.R =>
+        restart()
+      case KeyCode.A =>
+        rotateAlgo()
+      case _ =>
+      // key not mapped to an action
+
+  private def handleButtonsPressed(): Unit =
+    dom.document.getElementById("regen-map-button").addEventListener("click", e => regenMap())
+    dom.document.getElementById("restart-algo-button").addEventListener("click", e => restart())
+    dom.document.getElementById("rotate-algo-button").addEventListener("click", e => rotateAlgo())
+
   def main(args: Array[String]): Unit =
     Canvas.init()
     Canvas.drawGridBackground()
     initNewRandomMap()
     dom.window.onkeydown = mouseEvent => handleKeyPressed(mouseEvent.keyCode)
+    handleButtonsPressed()

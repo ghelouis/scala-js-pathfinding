@@ -4,16 +4,33 @@
     <meta charset="UTF-8">
     <title>Pathfinding Algorithms</title>
     <style>
-      canvas {padding: 0;margin:auto;display:block;position: absolute;top: 0;bottom: 0; left: 0; right: 0;border: 2px solid black;}
+      canvas {
+        padding: 0;
+        margin:auto;
+        display:block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border: 2px solid black;
+      }
+      a {
+        position: fixed;
+        bottom: 0;
+        text-align: center;
+        width: 100%;
+      }
     </style>
   </head>
   <body>
-    <p>Press <strong>N</strong> to generate a new map</p>
-    <p>Press <strong>R</strong> to restart the algorithm</p>
-    <p>Press <strong>A</strong> to rotate through the algorithms</p>
+    <p><button id="regen-map-button" title="Keyboard shortcut: N">Generate a new map</button></p>
+    <p><button id="restart-algo-button" title="Keyboard shortcut: R">Restart the algorithm</button></p>
+    <p><button id="rotate-algo-button" title="Keyboard shortcut: A">Rotate through the algorithms</button></p>
     <p>Algorithm: <strong><span id="algo">Dijkstra</span></strong></p>
     <canvas></canvas>
     <!-- Include Scala.js compiled code -->
     <script type="text/javascript" src="./target/scala-3.3.4/scala-js-pathfinding-fastopt/main.js"></script>
+    <a href="https://github.com/ghelouis/scala-js-pathfinding">Source Code</a>
   </body>
 </html>
